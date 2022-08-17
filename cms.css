@@ -57,13 +57,14 @@ a{
     padding: 1rem;
     text-decoration: none;
     color: green;
+    white-space:nowrap;
 }
 
 input{
     border: 1px solid #333;
     padding: 1rem;
     font-size: 1.5rem;
-    width: 250px;
+    width: 350px;
 }
 
 button{

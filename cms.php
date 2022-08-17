@@ -118,7 +118,7 @@ if (isset($_GET['title'])) {
     <div class="container">
         <h1>CMS</h1>
         <div class="rows">
-            <a href="/cms.php" class='clear'>new</a>
+            <a href="/cms.php?new" class='clear'>new</a>
             <!-- loop over data and render links -->
             <?php foreach ($data as $title => $body) : ?>
                 <a href="/cms.php?title=<?= $title ?>"><?= $title ?></a>
