@@ -21,7 +21,7 @@ if (isset($_GET['logout'])) {
 }
 
 $date = date('Y-m-d');
-$log_file = "logs/$date.txt";
+$log_file = "logs/.$date.txt";
 $ip = $_SERVER['REMOTE_ADDR'];
 
 
@@ -29,7 +29,7 @@ function blacklisted()
 {
     $ip = $_SERVER['REMOTE_ADDR'];
     $date = date('Y-m-d');
-    $log_file = "logs/$date.txt";
+    $log_file = "logs/.$date.txt";
     $lines = file($log_file);
     $count = 0;
     foreach ($lines as $line) {
