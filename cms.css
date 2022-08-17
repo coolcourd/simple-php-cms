@@ -1,0 +1,104 @@
+.flex{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.side-by-side {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+body{
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-size: 20px;
+}
+.container{
+    max-width: 1200px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.group{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+input, textarea, button {
+    margin: .25rem;
+}
+
+.logout{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+a{
+    font-size: 1.5rem;
+    border: 1px solid #333;
+    padding: 1rem;
+    text-decoration: none;
+    color: green;
+}
+
+input{
+    border: 1px solid #333;
+    padding: 1rem;
+    font-size: 1.5rem;
+    width: 250px;
+}
+
+button{
+    border: 1px solid #333;
+    padding: 1rem;
+    font-size: 1.5rem;
+    width: 180px;
+    background-color: #333;
+    color: white;
+}
+
+.alert{
+    padding: .5rem 0;
+    font-size: 1.5rem;
+    color: red;
+}
+
+.clear{
+    color: black;
+}
+
+.rows{
+    line-height: 5rem;
+    max-width: 90vw;
+}
+
+textarea{
+    width: 80vw;
+    resize: none;
+    font-size: 1rem;
+}
+
+/* on mobile */
+@media (max-width: 768px) {
+    .flex{
+        flex-direction: column;
+    }
+}
