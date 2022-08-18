@@ -125,7 +125,7 @@ if (isset($_FILES['file'])) {
                 else
                     $url = "http://";
                 $url .= $_SERVER['HTTP_HOST'];
-                $message = "Image uploaded successfully. the url is $url/$image_destination";
+                $message = "Image uploaded successfully. the url is <a target='_blank' href='$url/$image_destination'>$url/$image_destination</a>";
             } else {
                 $message = "Image is too big";
             }
@@ -136,7 +136,17 @@ if (isset($_FILES['file'])) {
         $message = "Image type is not allowed";
     }
 }
-
+// random string
+function randomString($length = 10)
+{
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
 
 ?>
 
@@ -148,7 +158,7 @@ if (isset($_FILES['file'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>cms</title>
-    <link rel="stylesheet" href="/cms.css">
+    <link rel="stylesheet" href="/cms.css?<?php echo randomString() ?>">
 </head>
 
 <body>
@@ -181,13 +191,16 @@ if (isset($_FILES['file'])) {
             </div>
         </form>
         <?php if (isset($message)) : ?>
-            <p><?= $message ?></p>
+            <p id='message'><?= $message ?></p>
         <?php endif ?>
         <hr>
     </div>
     <script>
         if (!!window.location.search.match('title') || !!window.location.search.match('new')) {
             document.getElementById('body-text').focus();
+        }
+        if (!!document.getElementById('message')){
+            document.getElementById('message').scrollIntoView();
         }
     </script>
 </body>

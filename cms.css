@@ -98,6 +98,23 @@ textarea{
     font-size: 1rem;
 }
 
+#message {
+    box-shadow: 2px 2px 20px rgb(50 150 150 / 20%);
+    padding: 2rem;
+    color: #551;
+    font-weight: bold;
+    max-width: 90vw;
+    word-wrap: break-word;
+    font-size: 1.5rem;
+}
+
+#message > a {
+    border: none;
+    color: green;
+    white-space: normal;
+    padding: 0px;
+}
+
 /* on mobile */
 @media (max-width: 768px) {
     .side-by-side{
