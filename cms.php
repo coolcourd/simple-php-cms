@@ -1,6 +1,6 @@
 <?php
 
-if ($_GET['json']) {
+if (isset($_GET['json'])) {
     $json = file_get_contents('data.json');
     // allow coors
     header("Access-Control-Allow-Origin: *");
@@ -100,6 +100,44 @@ if (isset($_GET['title'])) {
 }
 
 
+// handle image upload
+if (isset($_FILES['file'])) {
+    // if there is no images directory, create it
+    if (!file_exists('images')) {
+        mkdir('images');
+    }
+    $image = $_FILES['file'];
+    $image_name = $image['name'];
+    $image_tmp_name = $image['tmp_name'];
+    $image_size = $image['size'];
+    $image_error = $image['error'];
+    $image_type = $image['type'];
+    $image_ext = explode('.', $image_name);
+    $image_ext = strtolower(end($image_ext));
+    $allowed = array('jpg', 'jpeg', 'png');
+    if (in_array($image_ext, $allowed)) {
+        if ($image_error === 0) {
+            if ($image_size <= 1000000) {
+                $image_destination = 'images/' . $image_name;
+                move_uploaded_file($image_tmp_name, $image_destination);
+                if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+                    $url = "https://";
+                else
+                    $url = "http://";
+                $url .= $_SERVER['HTTP_HOST'];
+                $message = "Image uploaded successfully. the url is $url/$image_destination";
+            } else {
+                $message = "Image is too big";
+            }
+        } else {
+            $message = "There was an error uploading the image";
+        }
+    } else {
+        $message = "Image type is not allowed";
+    }
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -135,8 +173,23 @@ if (isset($_GET['title'])) {
                 </form>
             </div>
         </div>
+        <!-- image upload form -->
+        <form action="" method="post" enctype="multipart/form-data">
+            <div class="group">
+                <input type="file" name="file" id="file">
+                <button type='submit'>Upload</button>
+            </div>
+        </form>
+        <?php if (isset($message)) : ?>
+            <p><?= $message ?></p>
+        <?php endif ?>
         <hr>
     </div>
+    <script>
+        if (!!window.location.search.match('title') || !!window.location.search.match('new')) {
+            document.getElementById('body-text').focus();
+        }
+    </script>
 </body>
 
 </html>

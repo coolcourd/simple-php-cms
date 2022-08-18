@@ -65,6 +65,7 @@ input{
     padding: 1rem;
     font-size: 1.5rem;
     width: 350px;
+    max-width: 80vw;
 }
 
 button{
@@ -99,7 +100,7 @@ textarea{
 
 /* on mobile */
 @media (max-width: 768px) {
-    .flex{
+    .side-by-side{
         flex-direction: column;
     }
 }
