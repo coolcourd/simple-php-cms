@@ -99,6 +99,65 @@ if (isset($_GET['title'])) {
     $default_body = "";
 }
 
+function upload_image()
+{
+    $uploadTo = "images/";
+    $allowImageExt = array('jpg', 'png', 'jpeg', 'gif');
+    $imageName = $_FILES['file']['name'];
+    $tempPath = $_FILES["file"]["tmp_name"];
+    $imageQuality = 60;
+    $basename = basename($imageName);
+    $originalPath = $uploadTo . $basename;
+    $imageExt = pathinfo($originalPath, PATHINFO_EXTENSION);
+    if (empty($imageName)) {
+        $error = "Please Select files..";
+        return $error;
+    } else {
+
+        if (in_array($imageExt, $allowImageExt)) {
+            $compressedImage = compress_image($tempPath, $originalPath, $imageQuality);
+            if ($compressedImage) {
+                if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+                $url = "https://";
+            else
+                $url = "http://";
+            $url .= $_SERVER['HTTP_HOST'];
+                return "Image was compressed and uploaded to server as <a target='_blank' href='$url/$originalPath'>$url/$originalPath</a>";
+            } else {
+                return "Some error !.. check your script";
+            }
+        } else {
+            return "Image Type not allowed";
+        }
+    }
+}
+function compress_image($tempPath, $originalPath, $imageQuality)
+{
+
+    // Get image info 
+    $imgInfo = getimagesize($tempPath);
+    $mime = $imgInfo['mime'];
+
+    // Create a new image from file 
+    switch ($mime) {
+        case 'image/jpeg':
+            $image = imagecreatefromjpeg($tempPath);
+            break;
+        case 'image/png':
+            $image = imagecreatefrompng($tempPath);
+            break;
+        case 'image/gif':
+            $image = imagecreatefromgif($tempPath);
+            break;
+        default:
+            $image = imagecreatefromjpeg($tempPath);
+    }
+
+    // Save image 
+    imagejpeg($image, $originalPath, $imageQuality);
+    // Return compressed image 
+    return $originalPath;
+}
 
 // handle image upload
 if (isset($_FILES['file'])) {
@@ -106,60 +165,9 @@ if (isset($_FILES['file'])) {
     if (!file_exists('images')) {
         mkdir('images');
     }
-    $image = $_FILES['file'];
-    $image_name = $image['name'];
-    $image_tmp_name = $image['tmp_name'];
-    $image_size = $image['size'];
-    $image_error = $image['error'];
-    $image_type = $image['type'];
-    $image_ext = explode('.', $image_name);
-    $image_ext = strtolower(end($image_ext));
-    $allowed = array('jpg', 'jpeg', 'png');
-    if (in_array($image_ext, $allowed)) {
-        if ($image_error === 0) {
-            if ($image_size <= 1000000) {
-                $image_destination = 'images/' . $image_name;
-                move_uploaded_file($image_tmp_name, $image_destination);
-                if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
-                    $url = "https://";
-                else
-                    $url = "http://";
-                $url .= $_SERVER['HTTP_HOST'];
-                $message = "Image uploaded successfully. the url is <a target='_blank' href='$url/$image_destination'>$url/$image_destination</a>";
-            } else {
-                // resize image
-                $image_destination = 'images/' . $image_name;
-                move_uploaded_file($image_tmp_name, $image_destination);
-                $image_size = getimagesize($image_destination);
-                $image_width = $image_size[0];
-                $image_height = $image_size[1];
-                $image_ratio = $image_width / $image_height;
-                if ($image_ratio > 1) {
-                    $image_width = 500;
-                    $image_height = 500 / $image_ratio;
-                } else {
-                    $image_height = 500;
-                    $image_width = 500 * $image_ratio;
-                }
-                $image_resized = imagecreatetruecolor($image_width, $image_height);
-                $image_source = imagecreatefromjpeg($image_destination);
-                imagecopyresampled($image_resized, $image_source, 0, 0, 0, 0, $image_width, $image_height, $image_width, $image_height);
-                imagejpeg($image_resized, $image_destination);
-                if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
-                    $url = "https://";
-                else
-                    $url = "http://";
-                $url .= $_SERVER['HTTP_HOST'];
-                $message = "Image resized and uploaded successfully. the url is <a target='_blank' href='$url/$image_destination'>$url/$image_destination</a>";
-            }
-        } else {
-            $message = "There was an error uploading the image";
-        }
-    } else {
-        $message = "Image type is not allowed";
-    }
+    $message = upload_image();
 }
-// random string
+
 function randomString($length = 10)
 {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
