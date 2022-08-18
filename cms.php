@@ -127,7 +127,30 @@ if (isset($_FILES['file'])) {
                 $url .= $_SERVER['HTTP_HOST'];
                 $message = "Image uploaded successfully. the url is <a target='_blank' href='$url/$image_destination'>$url/$image_destination</a>";
             } else {
-                $message = "Image is too big";
+                // resize image
+                $image_destination = 'images/' . $image_name;
+                move_uploaded_file($image_tmp_name, $image_destination);
+                $image_size = getimagesize($image_destination);
+                $image_width = $image_size[0];
+                $image_height = $image_size[1];
+                $image_ratio = $image_width / $image_height;
+                if ($image_ratio > 1) {
+                    $image_width = 500;
+                    $image_height = 500 / $image_ratio;
+                } else {
+                    $image_height = 500;
+                    $image_width = 500 * $image_ratio;
+                }
+                $image_resized = imagecreatetruecolor($image_width, $image_height);
+                $image_source = imagecreatefromjpeg($image_destination);
+                imagecopyresampled($image_resized, $image_source, 0, 0, 0, 0, $image_width, $image_height, $image_width, $image_height);
+                imagejpeg($image_resized, $image_destination);
+                if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+                    $url = "https://";
+                else
+                    $url = "http://";
+                $url .= $_SERVER['HTTP_HOST'];
+                $message = "Image resized and uploaded successfully. the url is <a target='_blank' href='$url/$image_destination'>$url/$image_destination</a>";
             }
         } else {
             $message = "There was an error uploading the image";
@@ -199,7 +222,7 @@ function randomString($length = 10)
         if (!!window.location.search.match('title') || !!window.location.search.match('new')) {
             document.getElementById('body-text').focus();
         }
-        if (!!document.getElementById('message')){
+        if (!!document.getElementById('message')) {
             document.getElementById('message').scrollIntoView();
         }
     </script>
