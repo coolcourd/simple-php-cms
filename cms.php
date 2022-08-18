@@ -118,10 +118,10 @@ function upload_image()
             $compressedImage = compress_image($tempPath, $originalPath, $imageQuality);
             if ($compressedImage) {
                 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
-                $url = "https://";
-            else
-                $url = "http://";
-            $url .= $_SERVER['HTTP_HOST'];
+                    $url = "https://";
+                else
+                    $url = "http://";
+                $url .= $_SERVER['HTTP_HOST'];
                 return "Image was compressed and uploaded to server as <a target='_blank' href='$url/$originalPath'>$url/$originalPath</a>";
             } else {
                 return "Some error !.. check your script";
@@ -225,6 +225,15 @@ function randomString($length = 10)
             <p id='message'><?= $message ?></p>
         <?php endif ?>
         <hr>
+
+        <h2>Uploaded Images</h2>
+        <div class="rows">
+            <?php foreach (scandir('images') as $file) : ?>
+                <?php if ($file !== '.' && $file !== '..') : ?>
+                    <a target='_blank' href='/images/<?= $file ?>'><?= $file ?></a>
+                <?php endif ?>
+            <?php endforeach ?>
+        </div>
     </div>
     <script>
         if (!!window.location.search.match('title') || !!window.location.search.match('new')) {
