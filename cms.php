@@ -179,9 +179,14 @@ function randomString($length = 10)
     return $randomString;
 }
 
-?>
 
+?>
 <!DOCTYPE html>
+<?php
+if (isset($_GET['tiny'])) {
+    include('tinystuff.php');
+}
+?>
 <html lang="en">
 
 <head>
@@ -209,7 +214,21 @@ function randomString($length = 10)
                     <div class="group">
                         <input type='text' name='title' placeholder='Title' value='<?php echo $default_title ?>' id="title">
                         <textarea name="body" class='vw80' id="body-text" cols="30" rows="10"><?php echo $default_body ?></textarea>
-                        <button type='submit'>Save</button>
+                        <?php
+                        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+                            $url = "https://";
+                        else
+                            $url = "http://";
+                        $url .= $_SERVER['HTTP_HOST'];
+                        $url .= $_SERVER['REQUEST_URI'];
+                        ?>
+                        <span>
+                            <button type='submit'>Save</button>
+                            <?php error_log($_SERVER['REQUEST_URI']);?>
+                            <?php if (! strstr($_SERVER['REQUEST_URI'], 'tiny=true')) {
+                            ?><a href="<?php echo $url ?>&tiny=true">switch to visual</a>
+                            <?php } ?>
+                        </span>
                     </div>
                 </form>
             </div>
