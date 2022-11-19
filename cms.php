@@ -61,6 +61,26 @@ if (!isset($_SESSION['loggedin']))      // if there is no valid session
     die();
 }
 
+// if ?export is set, connect to mysql database and export the users table to csv
+if (isset($_GET['export'])) {
+    $mysqli = new mysqli(DBHOST, DBUSER, DBPASS, DBNAME);
+    if ($mysqli->connect_errno) {
+        echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+    }
+    $result = $mysqli->query("SELECT * FROM " . DBTABLE);
+    $fp = fopen('php://output', 'w');
+    if ($fp && $result) {
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="export.csv"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        fputcsv($fp, array('id', 'name', 'email', 'phone', 'date', 'time', 'ip'));
+        while ($row = $result->fetch_array(MYSQLI_NUM)) {
+            fputcsv($fp, array_values($row));
+        }
+        die;
+    }
+}
 
 function updateData($data)
 {
@@ -253,6 +273,13 @@ if (isset($_GET['tiny'])) {
                 <?php endif ?>
             <?php endforeach ?>
         </div>
+        <!-- if DBUSER DBPASS DBNAME and DBTABLE are defined export the table to csv-->
+        
+        <?php if (defined('DBUSER') && defined('DBPASS') && defined('DBNAME') && defined('DBTABLE')) : ?>
+            <h2>Export Data</h2>
+            <a href="/cms.php?export">Export <?php echo DBTABLE ?> to CSV</a>
+        <?php endif ?>
+
     </div>
     <script>
         if (!!window.location.search.match('title') || !!window.location.search.match('new')) {
